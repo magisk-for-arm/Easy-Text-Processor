@@ -3,7 +3,7 @@
 
 ## 功能介绍
 1.提供批量重命名功能  
-2.提供文本编码转化功能（utf8 >- utf16le)  
+2.提供文本编码转化功能  
 3.提供导出文件名功能
 ![](https://github.com/magisk-for-arm/-/blob/main/%E5%9B%BE1.png)
 
