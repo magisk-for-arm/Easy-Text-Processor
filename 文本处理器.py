@@ -329,20 +329,20 @@ class FileProcessorApp(QMainWindow):
         rename_tabs = QTabWidget()
         
         # 关键字替换选项卡
-        replace_tab = self.create_replace_tab()
-        rename_tabs.addTab(replace_tab, "关键字替换")
+        self.replace_tab = self.create_replace_tab()
+        rename_tabs.addTab(self.replace_tab, "关键字替换")
         
         # 添加前缀/后缀选项卡
-        affix_tab = self.create_affix_tab()
-        rename_tabs.addTab(affix_tab, "添加前缀/后缀")
+        self.affix_tab = self.create_affix_tab()
+        rename_tabs.addTab(self.affix_tab, "添加前缀/后缀")
         
         # 删除前缀/后缀选项卡
-        remove_affix_tab = self.create_remove_affix_tab()
-        rename_tabs.addTab(remove_affix_tab, "删除前缀/后缀")
+        self.remove_affix_tab = self.create_remove_affix_tab()
+        rename_tabs.addTab(self.remove_affix_tab, "删除前缀/后缀")
         
         # 序号重命名选项卡
-        sequence_tab = self.create_sequence_tab()
-        rename_tabs.addTab(sequence_tab, "序号重命名")
+        self.sequence_tab = self.create_sequence_tab()
+        rename_tabs.addTab(self.sequence_tab, "序号重命名")
         
         layout.addWidget(rename_tabs)
         group.setLayout(layout)
@@ -370,37 +370,39 @@ class FileProcessorApp(QMainWindow):
         
         remove_options_layout = QHBoxLayout()
         remove_options_layout.addWidget(QLabel("删除类型:"))
-        self.remove_prefix_radio = QRadioButton("前缀")
-        self.remove_prefix_radio.setChecked(True)
-        self.remove_suffix_radio = QRadioButton("后缀")
+        
+        # 将控件添加到选项卡对象，而不是self
+        tab.remove_prefix_radio = QRadioButton("前缀")
+        tab.remove_prefix_radio.setChecked(True)
+        tab.remove_suffix_radio = QRadioButton("后缀")
         
         remove_type_group = QButtonGroup()
-        remove_type_group.addButton(self.remove_prefix_radio)
-        remove_type_group.addButton(self.remove_suffix_radio)
+        remove_type_group.addButton(tab.remove_prefix_radio)
+        remove_type_group.addButton(tab.remove_suffix_radio)
         
-        remove_options_layout.addWidget(self.remove_prefix_radio)
-        remove_options_layout.addWidget(self.remove_suffix_radio)
+        remove_options_layout.addWidget(tab.remove_prefix_radio)
+        remove_options_layout.addWidget(tab.remove_suffix_radio)
         remove_options_layout.addStretch()
         
         layout.addLayout(remove_options_layout)
         
         remove_count_layout = QHBoxLayout()
         remove_count_layout.addWidget(QLabel("删除字符个数:"))
-        self.remove_count = QSpinBox()
-        self.remove_count.setMinimum(1)
-        self.remove_count.setMaximum(100)
-        self.remove_count.setValue(1)
-        remove_count_layout.addWidget(self.remove_count)
+        tab.remove_count = QSpinBox()
+        tab.remove_count.setMinimum(1)
+        tab.remove_count.setMaximum(100)
+        tab.remove_count.setValue(1)
+        remove_count_layout.addWidget(tab.remove_count)
         
         layout.addLayout(remove_count_layout)
         
-        self.remove_affix_preview_btn = QPushButton("预览")
-        self.remove_affix_preview_btn.clicked.connect(lambda: self.preview_rename("remove_affix"))
-        layout.addWidget(self.remove_affix_preview_btn)
+        tab.remove_affix_preview_btn = QPushButton("预览")
+        tab.remove_affix_preview_btn.clicked.connect(lambda: self.preview_rename("remove_affix"))
+        layout.addWidget(tab.remove_affix_preview_btn)
         
-        self.remove_affix_btn = QPushButton("删除前缀/后缀")
-        self.remove_affix_btn.clicked.connect(lambda: self.rename_files("remove_affix"))
-        layout.addWidget(self.remove_affix_btn)
+        tab.remove_affix_btn = QPushButton("删除前缀/后缀")
+        tab.remove_affix_btn.clicked.connect(lambda: self.rename_files("remove_affix"))
+        layout.addWidget(tab.remove_affix_btn)
         
         return tab
     
@@ -410,44 +412,46 @@ class FileProcessorApp(QMainWindow):
         
         sequence_options_layout = QHBoxLayout()
         sequence_options_layout.addWidget(QLabel("起始序号:"))
-        self.start_number = QSpinBox()
-        self.start_number.setMinimum(1)
-        self.start_number.setValue(1)
-        sequence_options_layout.addWidget(self.start_number)
+        
+        # 将控件添加到选项卡对象，而不是self
+        tab.start_number = QSpinBox()
+        tab.start_number.setMinimum(1)
+        tab.start_number.setValue(1)
+        sequence_options_layout.addWidget(tab.start_number)
         
         sequence_options_layout.addWidget(QLabel("位数:"))
-        self.digit_count = QSpinBox()
-        self.digit_count.setMinimum(1)
-        self.digit_count.setMaximum(10)
-        self.digit_count.setValue(3)
-        sequence_options_layout.addWidget(self.digit_count)
+        tab.digit_count = QSpinBox()
+        tab.digit_count.setMinimum(1)
+        tab.digit_count.setMaximum(10)
+        tab.digit_count.setValue(3)
+        sequence_options_layout.addWidget(tab.digit_count)
         
         layout.addLayout(sequence_options_layout)
         
         # 序号重命名模式选择
         sequence_mode_layout = QHBoxLayout()
         sequence_mode_layout.addWidget(QLabel("序号模式:"))
-        self.sequence_append_radio = QRadioButton("追加序号")
-        self.sequence_append_radio.setChecked(True)
-        self.sequence_replace_radio = QRadioButton("替换名称")
+        tab.sequence_append_radio = QRadioButton("追加序号")
+        tab.sequence_append_radio.setChecked(True)
+        tab.sequence_replace_radio = QRadioButton("替换名称")
         
         sequence_mode_group = QButtonGroup()
-        sequence_mode_group.addButton(self.sequence_append_radio)
-        sequence_mode_group.addButton(self.sequence_replace_radio)
+        sequence_mode_group.addButton(tab.sequence_append_radio)
+        sequence_mode_group.addButton(tab.sequence_replace_radio)
         
-        sequence_mode_layout.addWidget(self.sequence_append_radio)
-        sequence_mode_layout.addWidget(self.sequence_replace_radio)
+        sequence_mode_layout.addWidget(tab.sequence_append_radio)
+        sequence_mode_layout.addWidget(tab.sequence_replace_radio)
         sequence_mode_layout.addStretch()
         
         layout.addLayout(sequence_mode_layout)
         
-        self.sequence_preview_btn = QPushButton("预览")
-        self.sequence_preview_btn.clicked.connect(lambda: self.preview_rename("sequence"))
-        layout.addWidget(self.sequence_preview_btn)
+        tab.sequence_preview_btn = QPushButton("预览")
+        tab.sequence_preview_btn.clicked.connect(lambda: self.preview_rename("sequence"))
+        layout.addWidget(tab.sequence_preview_btn)
         
-        self.sequence_btn = QPushButton("序号重命名")
-        self.sequence_btn.clicked.connect(lambda: self.rename_files("sequence"))
-        layout.addWidget(self.sequence_btn)
+        tab.sequence_btn = QPushButton("序号重命名")
+        tab.sequence_btn.clicked.connect(lambda: self.rename_files("sequence"))
+        layout.addWidget(tab.sequence_btn)
         
         return tab
     
@@ -803,18 +807,21 @@ class FileProcessorApp(QMainWindow):
         changes = []
         
         if rename_type == "replace":
-            if not (find_str := self.find_text.text()):
+            # 通过选项卡引用访问UI元素
+            find_str = self.replace_tab.find_text.text()
+            if not find_str:
                 self.show_warning("请输入要查找的文本")
                 return
             
-            replace_str = self.replace_text.text()
+            replace_str = self.replace_tab.replace_text.text()
             for file in files:
                 file_name = file['name']
                 changes.append((file_name, file_name.replace(find_str, replace_str)))
         
         elif rename_type == "affix":
-            prefix = self.prefix_text.text()
-            suffix = self.suffix_text.text()
+            # 通过选项卡引用访问UI元素
+            prefix = self.affix_tab.prefix_text.text()
+            suffix = self.affix_tab.suffix_text.text()
             
             if not prefix and not suffix:
                 self.show_warning("请至少输入前缀或后缀")
@@ -826,13 +833,14 @@ class FileProcessorApp(QMainWindow):
                 changes.append((file_name, f"{prefix}{name_parts[0]}{suffix}{name_parts[1]}"))
         
         elif rename_type == "remove_affix":
-            remove_count = self.remove_count.value()
+            # 通过选项卡引用访问UI元素
+            remove_count = self.remove_affix_tab.remove_count.value()
             
             for file in files:
                 file_name = file['name']
                 name_parts = os.path.splitext(file_name)
                 
-                if self.remove_prefix_radio.isChecked():
+                if self.remove_affix_tab.remove_prefix_radio.isChecked():
                     # 删除前缀字符
                     if len(name_parts[0]) > remove_count:
                         new_name = f"{name_parts[0][remove_count:]}{name_parts[1]}"
@@ -848,8 +856,9 @@ class FileProcessorApp(QMainWindow):
                 changes.append((file_name, new_name))
         
         elif rename_type == "sequence":
-            start_num = self.start_number.value()
-            digits = self.digit_count.value()
+            # 通过选项卡引用访问UI元素
+            start_num = self.sequence_tab.start_number.value()
+            digits = self.sequence_tab.digit_count.value()
             
             for i, file in enumerate(files):
                 file_name = file['name']
@@ -857,7 +866,7 @@ class FileProcessorApp(QMainWindow):
                 seq_str = f"{seq_num:0{digits}d}"
                 name_parts = os.path.splitext(file_name)
                 
-                if self.sequence_replace_radio.isChecked():
+                if self.sequence_tab.sequence_replace_radio.isChecked():
                     # 替换模式：完全用序号替换原始名称
                     new_name = f"{seq_str}{name_parts[1]}"
                 else:
@@ -895,16 +904,19 @@ class FileProcessorApp(QMainWindow):
             QMessageBox.information(self, "完成", f"重命名完成，成功 {success_count} 个文件")
     
     def _rename_replace(self, files):
-        if not (find_str := self.find_text.text()):
+        # 通过选项卡引用访问UI元素
+        find_str = self.replace_tab.find_text.text()
+        if not find_str:
             self.show_warning("请输入要查找的文本")
             return 0, False
         
-        replace_str = self.replace_text.text()
+        replace_str = self.replace_tab.replace_text.text()
         return self._process_rename_operation(files, lambda f: f.replace(find_str, replace_str))
     
     def _rename_affix(self, files):
-        prefix = self.prefix_text.text()
-        suffix = self.suffix_text.text()
+        # 通过选项卡引用访问UI元素
+        prefix = self.affix_tab.prefix_text.text()
+        suffix = self.affix_tab.suffix_text.text()
         
         if not prefix and not suffix:
             self.show_warning("请至少输入前缀或后缀")
@@ -913,11 +925,12 @@ class FileProcessorApp(QMainWindow):
         return self._process_rename_operation(files, lambda f: f"{prefix}{os.path.splitext(f)[0]}{suffix}{os.path.splitext(f)[1]}")
     
     def _rename_remove_affix(self, files):
-        remove_count = self.remove_count.value()
+        # 通过选项卡引用访问UI元素
+        remove_count = self.remove_affix_tab.remove_count.value()
         
         def remove_affix_func(file_name):
             name_parts = os.path.splitext(file_name)
-            if self.remove_prefix_radio.isChecked():
+            if self.remove_affix_tab.remove_prefix_radio.isChecked():
                 return f"{name_parts[0][remove_count:]}{name_parts[1]}" if len(name_parts[0]) > remove_count else name_parts[1]
             else:
                 return f"{name_parts[0][:-remove_count]}{name_parts[1]}" if len(name_parts[0]) > remove_count else name_parts[1]
@@ -925,15 +938,16 @@ class FileProcessorApp(QMainWindow):
         return self._process_rename_operation(files, remove_affix_func)
     
     def _rename_sequence(self, files):
-        start_num = self.start_number.value()
-        digits = self.digit_count.value()
+        # 通过选项卡引用访问UI元素
+        start_num = self.sequence_tab.start_number.value()
+        digits = self.sequence_tab.digit_count.value()
         
         def sequence_func(file_name, i):
             seq_num = start_num + i
             seq_str = f"{seq_num:0{digits}d}"
             name_parts = os.path.splitext(file_name)
             
-            if self.sequence_replace_radio.isChecked():
+            if self.sequence_tab.sequence_replace_radio.isChecked():
                 return f"{seq_str}{name_parts[1]}"
             else:
                 return f"{name_parts[0]}_{seq_str}{name_parts[1]}"
